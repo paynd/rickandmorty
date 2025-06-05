@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_compose"
+        android:title="Compose Grid"
+        android:icon="@drawable/ic_grid_compose" />
+
+    <item
+        android:id="@+id/nav_recyclerview"
+        android:title="RecyclerView Grid"
+        android:icon="@drawable/ic_grid_recycler" />
+
+</menu>
