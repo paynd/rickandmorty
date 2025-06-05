@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "tink"
 include(":app")
+include(":sdk")
