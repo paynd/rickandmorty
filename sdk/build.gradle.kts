@@ -35,6 +35,7 @@ android {
 
 dependencies {
     implementation(libs.bundles.sdk.core)
+    implementation(libs.androidx.collection.jvm)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

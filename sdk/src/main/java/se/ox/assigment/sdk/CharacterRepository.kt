@@ -1,5 +1,6 @@
 package se.ox.assigment.sdk
 
+import androidx.collection.LruCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -11,8 +12,11 @@ class CharacterRepository : PaginatedDataSource {
     private val repositoryDispatcher: CoroutineDispatcher =
         Dispatchers.IO.limitedParallelism(1)
 
+    // Memory management
+    private val maxCacheSize = 500
     // No synchronization needed - single thread guarantees sequential access
-    private val allCharacters = mutableListOf<Character>()
+    private val characterCache = LruCache<Int, Character>(maxCacheSize)
+
     private var currentPage = 1
     private var totalPages = 1
     private var hasMore = true
@@ -34,9 +38,12 @@ class CharacterRepository : PaginatedDataSource {
                         }
 
                         if (page == 1) {
-                            allCharacters.clear()
+                            characterCache.evictAll()
                         }
-                        allCharacters.addAll(characters)
+
+                        characters.forEach { character ->
+                            characterCache.put(character.id, character)
+                        }
 
                         currentPage = page
                         totalPages = apiResponse.info.pages
@@ -63,7 +70,7 @@ class CharacterRepository : PaginatedDataSource {
 
     override suspend fun getCurrentData(): List<Character> {
         return withContext(repositoryDispatcher) {
-            allCharacters.toList()
+            characterCache.snapshot().values.toList()
         }
     }
 
@@ -74,7 +81,7 @@ class CharacterRepository : PaginatedDataSource {
     }
 
     override suspend fun reset() = withContext(repositoryDispatcher) {
-        allCharacters.clear()
+        characterCache.evictAll()
         currentPage = 1
         totalPages = 1
         hasMore = true
