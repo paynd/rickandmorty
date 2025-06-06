@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import se.ox.assigment.sdk.PaginatedDataSource
 import se.ox.assigment.sdk.SdkManager
 import se.ox.assigment.sdk.Character
+import se.ox.assigment.sdk.errors.CharacterError
 
 class CharacterViewModel : ViewModel() {
     private val repository: PaginatedDataSource = SdkManager.createCharacterRepository()
@@ -40,7 +41,22 @@ class CharacterViewModel : ViewModel() {
                     currentPage++
                 },
                 onFailure = { exception ->
-                    _error.value = exception.message ?: "Unknown error occurred"
+                    // here can be different scenarios of error handling,
+                    // but we will stick to simple error message
+                    when (exception) {
+                        is CharacterError.NetworkError -> {
+                            _error.value = exception.message
+                        }
+                        is CharacterError.ApiError -> {
+                            _error.value = exception.message
+                        }
+                        is CharacterError.HttpError -> {
+                            _error.value = exception.message
+                        }
+                        is CharacterError.Unknown -> {
+                            _error.value = exception.message
+                        }
+                    }
                 }
             )
 

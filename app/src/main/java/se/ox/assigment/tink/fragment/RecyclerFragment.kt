@@ -93,9 +93,9 @@ class RecyclerFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.error.collect { error ->
+                // todo: here we can show error somehow (toast, dialog or else, like logcat message)
                 error?.let {
-                    // todo: show error
-                    Log.e("###", "Shit happens: $it")
+                    Log.e("###", "Problem happens: $it")
                 }
             }
         }

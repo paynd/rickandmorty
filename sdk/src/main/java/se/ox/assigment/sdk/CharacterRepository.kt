@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import se.ox.assigment.sdk.api.NetworkModule
+import se.ox.assigment.sdk.errors.CharacterError
 
 class CharacterRepository : PaginatedDataSource {
     private val apiService = NetworkModule.apiService
@@ -12,8 +13,9 @@ class CharacterRepository : PaginatedDataSource {
     private val repositoryDispatcher: CoroutineDispatcher =
         Dispatchers.IO.limitedParallelism(1)
 
-    // Memory management
+    // Memory management limit
     private val maxCacheSize = 500
+
     // No synchronization needed - single thread guarantees sequential access
     private val characterCache = LruCache<Int, Character>(maxCacheSize)
 
@@ -27,43 +29,48 @@ class CharacterRepository : PaginatedDataSource {
                 val response = apiService.getCharacters(page)
 
                 if (response.isSuccessful) {
-                    val apiResponse = response.body()
-                    if (apiResponse != null) {
-                        val characters = apiResponse.results.map { apiCharacter ->
-                            Character(
-                                id = apiCharacter.id,
-                                name = apiCharacter.name,
-                                image = apiCharacter.image
-                            )
-                        }
+                    val apiResponse = response.body() ?: return@withContext Result.failure(
+                        CharacterError.ApiError
+                    )
 
-                        if (page == 1) {
-                            characterCache.evictAll()
-                        }
-
-                        characters.forEach { character ->
-                            characterCache.put(character.id, character)
-                        }
-
-                        currentPage = page
-                        totalPages = apiResponse.info.pages
-                        hasMore = apiResponse.info.next != null
-
-                        val pagedResponse = PagedResponse(
-                            data = characters,
-                            currentPage = page,
-                            hasNext = hasMore
+                    val characters = apiResponse.results.map { apiCharacter ->
+                        Character(
+                            id = apiCharacter.id,
+                            name = apiCharacter.name,
+                            image = apiCharacter.image
                         )
-
-                        Result.success(pagedResponse)
-                    } else {
-                        Result.failure(Exception("Empty response body"))
                     }
+
+                    if (page == 1) {
+                        characterCache.evictAll()
+                    }
+
+                    characters.forEach { character ->
+                        characterCache.put(character.id, character)
+                    }
+
+                    currentPage = page
+                    totalPages = apiResponse.info.pages
+                    hasMore = apiResponse.info.next != null
+
+                    val pagedResponse = PagedResponse(
+                        data = characters,
+                        currentPage = page,
+                        hasNext = hasMore
+                    )
+
+                    Result.success(pagedResponse)
                 } else {
-                    Result.failure(Exception("API call failed with code: ${response.code()}"))
+                    Result.failure(CharacterError.HttpError(response.code()))
                 }
             } catch (e: Exception) {
-                Result.failure(e)
+                val error = when (e) {
+                    is java.net.UnknownHostException,
+                    is java.net.SocketTimeoutException -> CharacterError.NetworkError
+
+                    else -> CharacterError.Unknown(e)
+                }
+                Result.failure(error)
             }
         }
     }
