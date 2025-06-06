@@ -47,6 +47,10 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.fragment.ktx)
+
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network)
 
     implementation(platform(libs.androidx.compose.bom))
 
