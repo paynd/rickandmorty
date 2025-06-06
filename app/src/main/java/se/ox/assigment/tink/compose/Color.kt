@@ -1,4 +1,4 @@
-package se.ox.assigment.tinkassigment.ui.theme
+package se.ox.assigment.tink.compose
 
 import androidx.compose.ui.graphics.Color
 
