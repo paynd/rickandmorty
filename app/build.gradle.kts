@@ -51,6 +51,7 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network)
+    implementation(libs.recyclerview)
 
     implementation(platform(libs.androidx.compose.bom))
 
