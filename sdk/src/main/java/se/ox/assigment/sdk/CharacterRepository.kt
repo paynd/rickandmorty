@@ -9,6 +9,7 @@ import se.ox.assigment.sdk.errors.CharacterError
 
 class CharacterRepository : PaginatedDataSource {
     private val apiService = NetworkModule.apiService
+    private val mapper = CharacterMapper
 
     private val repositoryDispatcher: CoroutineDispatcher =
         Dispatchers.IO.limitedParallelism(1)
@@ -33,13 +34,7 @@ class CharacterRepository : PaginatedDataSource {
                         CharacterError.ApiError
                     )
 
-                    val characters = apiResponse.results.map { apiCharacter ->
-                        Character(
-                            id = apiCharacter.id,
-                            name = apiCharacter.name,
-                            image = apiCharacter.image
-                        )
-                    }
+                    val characters =  mapper.mapToDomainList(apiResponse.results)
 
                     if (page == 1) {
                         characterCache.evictAll()
@@ -67,7 +62,6 @@ class CharacterRepository : PaginatedDataSource {
                 val error = when (e) {
                     is java.net.UnknownHostException,
                     is java.net.SocketTimeoutException -> CharacterError.NetworkError
-
                     else -> CharacterError.Unknown(e)
                 }
                 Result.failure(error)
