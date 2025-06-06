@@ -1,18 +1,24 @@
 package se.ox.assigment.sdk
 
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import se.ox.assigment.sdk.api.NetworkModule
 
 class CharacterRepository : PaginatedDataSource {
     private val apiService = NetworkModule.apiService
+
+    private val repositoryDispatcher: CoroutineDispatcher =
+        Dispatchers.IO.limitedParallelism(1)
+
+    // No synchronization needed - single thread guarantees sequential access
     private val allCharacters = mutableListOf<Character>()
     private var currentPage = 1
     private var totalPages = 1
     private var hasMore = true
 
     override suspend fun loadPage(page: Int): Result<PagedResponse> {
-        return withContext(Dispatchers.IO) {
+        return withContext(repositoryDispatcher) {
             try {
                 val response = apiService.getCharacters(page)
 
@@ -55,15 +61,19 @@ class CharacterRepository : PaginatedDataSource {
         }
     }
 
-    override fun getCurrentData(): List<Character> {
-        return allCharacters.toList()
+    override suspend fun getCurrentData(): List<Character> {
+        return withContext(repositoryDispatcher) {
+            allCharacters.toList()
+        }
     }
 
-    override fun hasMorePages(): Boolean {
-        return hasMore
+    override suspend fun hasMorePages(): Boolean {
+        return withContext(repositoryDispatcher) {
+            hasMore
+        }
     }
 
-    override fun reset() {
+    override suspend fun reset() = withContext(repositoryDispatcher) {
         allCharacters.clear()
         currentPage = 1
         totalPages = 1

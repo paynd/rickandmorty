@@ -2,9 +2,9 @@ package se.ox.assigment.sdk
 
 interface PaginatedDataSource {
     suspend fun loadPage(page: Int): Result<PagedResponse>
-    fun getCurrentData(): List<Character>
-    fun hasMorePages(): Boolean
-    fun reset()
+    suspend fun getCurrentData(): List<Character>
+    suspend fun hasMorePages(): Boolean
+    suspend fun reset()
 }
 
 data class PagedResponse(

@@ -49,29 +49,33 @@ class CharacterViewModel : ViewModel() {
     }
 
     fun loadMoreCharacters() {
-        if (!repository.hasMorePages() || _isLoading.value) return
-
         viewModelScope.launch {
-            _isLoading.value = true
+            if (!repository.hasMorePages() || _isLoading.value) return@launch
 
-            repository.loadPage(currentPage).fold(
-                onSuccess = {
-                    _characters.value = repository.getCurrentData()
-                    currentPage++
-                },
-                onFailure = { exception ->
-                    _error.value = exception.message ?: "Failed to load more characters"
-                }
-            )
+            viewModelScope.launch {
+                _isLoading.value = true
 
-            _isLoading.value = false
+                repository.loadPage(currentPage).fold(
+                    onSuccess = {
+                        _characters.value = repository.getCurrentData()
+                        currentPage++
+                    },
+                    onFailure = { exception ->
+                        _error.value = exception.message ?: "Failed to load more characters"
+                    }
+                )
+
+                _isLoading.value = false
+            }
         }
     }
 
     fun retry() {
-        repository.reset()
-        currentPage = 1
-        loadCharacters()
+        viewModelScope.launch {
+            repository.reset()
+            currentPage = 1
+            loadCharacters()
+        }
     }
 
 }
