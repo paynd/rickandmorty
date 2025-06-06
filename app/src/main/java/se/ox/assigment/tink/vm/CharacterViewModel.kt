@@ -47,12 +47,15 @@ class CharacterViewModel : ViewModel() {
                         is CharacterError.NetworkError -> {
                             _error.value = exception.message
                         }
+
                         is CharacterError.ApiError -> {
                             _error.value = exception.message
                         }
+
                         is CharacterError.HttpError -> {
                             _error.value = exception.message
                         }
+
                         is CharacterError.Unknown -> {
                             _error.value = exception.message
                         }
@@ -65,24 +68,23 @@ class CharacterViewModel : ViewModel() {
     }
 
     fun loadMoreCharacters() {
+        if (_isLoading.value) return
+
         viewModelScope.launch {
-            if (!repository.hasMorePages() || _isLoading.value) return@launch
+            if (!repository.hasMorePages()) return@launch
+            _isLoading.value = true
 
-            viewModelScope.launch {
-                _isLoading.value = true
+            repository.loadPage(currentPage).fold(
+                onSuccess = {
+                    _characters.value = repository.getCurrentData()
+                    currentPage++
+                },
+                onFailure = { exception ->
+                    _error.value = exception.message ?: "Failed to load more characters"
+                }
+            )
 
-                repository.loadPage(currentPage).fold(
-                    onSuccess = {
-                        _characters.value = repository.getCurrentData()
-                        currentPage++
-                    },
-                    onFailure = { exception ->
-                        _error.value = exception.message ?: "Failed to load more characters"
-                    }
-                )
-
-                _isLoading.value = false
-            }
+            _isLoading.value = false
         }
     }
 
