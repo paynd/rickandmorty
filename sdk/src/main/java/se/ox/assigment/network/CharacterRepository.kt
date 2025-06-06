@@ -1,11 +1,11 @@
-package se.ox.assigment.sdk
+package se.ox.assigment.network
 
 import androidx.collection.LruCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import se.ox.assigment.sdk.api.ApiService
-import se.ox.assigment.sdk.errors.CharacterError
+import se.ox.assigment.network.api.ApiService
+import se.ox.assigment.network.errors.CharacterError
 
 class CharacterRepository(
     config: SdkConfig = SdkConfig(),
@@ -34,7 +34,7 @@ class CharacterRepository(
                         CharacterError.ApiError
                     )
 
-                    val characters = mapper.mapToDomainList(apiResponse.results)
+                    val characters = CharacterMapper.mapToDomainList(apiResponse.results)
 
                     if (page == 1) {
                         characterCache.evictAll()

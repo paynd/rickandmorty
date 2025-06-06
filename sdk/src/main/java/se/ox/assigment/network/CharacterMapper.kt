@@ -1,7 +1,7 @@
-package se.ox.assigment.sdk
+package se.ox.assigment.network
 
 
-import se.ox.assigment.sdk.api.ApiCharacter
+import se.ox.assigment.network.api.ApiCharacter
 
 object CharacterMapper {
 

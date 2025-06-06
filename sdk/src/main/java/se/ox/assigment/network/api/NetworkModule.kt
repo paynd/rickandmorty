@@ -1,12 +1,11 @@
-package se.ox.assigment.sdk.api
-
+package se.ox.assigment.network.api
 
 import retrofit2.Retrofit
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import se.ox.assigment.sdk.SdkConfig
+import se.ox.assigment.network.SdkConfig
 import java.util.concurrent.TimeUnit
 
 object NetworkModule {

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import coil3.request.crossfade
 import se.ox.assigment.tink.R
-import se.ox.assigment.sdk.Character
+import se.ox.assigment.network.Character
 
 class CharacterAdapter(
     private val onCharacterClick: (Character) -> Unit

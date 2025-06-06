@@ -1,8 +1,9 @@
-package se.ox.assigment.sdk.api
+package se.ox.assigment.network.api
 
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
+import se.ox.assigment.network.api.ApiResponse
 
 interface ApiService {
     @GET("character")

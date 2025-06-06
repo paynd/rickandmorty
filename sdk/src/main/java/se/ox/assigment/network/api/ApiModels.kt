@@ -1,4 +1,4 @@
-package se.ox.assigment.sdk.api
+package se.ox.assigment.network.api
 
 import kotlinx.serialization.Serializable
 

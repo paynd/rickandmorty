@@ -1,4 +1,4 @@
-package se.ox.assigment.sdk.errors
+package se.ox.assigment.network.errors
 
 sealed class CharacterError : Exception() {
     data object NetworkError : CharacterError()

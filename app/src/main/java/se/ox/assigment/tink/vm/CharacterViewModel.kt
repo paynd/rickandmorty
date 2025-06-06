@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import se.ox.assigment.sdk.PaginatedDataSource
-import se.ox.assigment.sdk.SdkManager
-import se.ox.assigment.sdk.Character
-import se.ox.assigment.sdk.errors.CharacterError
+import se.ox.assigment.network.PaginatedDataSource
+import se.ox.assigment.network.SdkManager
+import se.ox.assigment.network.Character
+import se.ox.assigment.network.errors.CharacterError
 
 class CharacterViewModel : ViewModel() {
     private val repository: PaginatedDataSource = SdkManager.createCharacterRepository()
@@ -88,6 +88,7 @@ class CharacterViewModel : ViewModel() {
         }
     }
 
+    // todo
     fun retry() {
         viewModelScope.launch {
             repository.reset()

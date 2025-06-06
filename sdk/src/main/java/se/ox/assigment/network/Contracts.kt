@@ -1,4 +1,4 @@
-package se.ox.assigment.sdk
+package se.ox.assigment.network
 
 interface PaginatedDataSource {
     suspend fun loadPage(page: Int): Result<PagedResponse>

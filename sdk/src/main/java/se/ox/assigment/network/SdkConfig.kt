@@ -1,4 +1,4 @@
-package se.ox.assigment.sdk
+package se.ox.assigment.network
 
 data class SdkConfig(
     val baseUrl: String = "https://rickandmortyapi.com/api/",

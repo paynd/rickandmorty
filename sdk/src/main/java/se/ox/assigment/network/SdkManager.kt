@@ -1,6 +1,6 @@
-package se.ox.assigment.sdk
+package se.ox.assigment.network
 
-import se.ox.assigment.sdk.api.NetworkModule
+import se.ox.assigment.network.api.NetworkModule
 
 object SdkManager {
     private var mockRepository: PaginatedDataSource? = null
