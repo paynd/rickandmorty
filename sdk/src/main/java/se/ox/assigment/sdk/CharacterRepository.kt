@@ -4,11 +4,13 @@ import androidx.collection.LruCache
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import se.ox.assigment.sdk.api.NetworkModule
+import se.ox.assigment.sdk.api.ApiService
 import se.ox.assigment.sdk.errors.CharacterError
 
-class CharacterRepository(private val config: SdkConfig = SdkConfig()) : PaginatedDataSource {
-    private val apiService = NetworkModule.createApiService(config)
+class CharacterRepository(
+    config: SdkConfig = SdkConfig(),
+    private val apiService: ApiService,
+) : PaginatedDataSource {
     private val mapper = CharacterMapper
 
     private val repositoryDispatcher: CoroutineDispatcher =
@@ -32,7 +34,7 @@ class CharacterRepository(private val config: SdkConfig = SdkConfig()) : Paginat
                         CharacterError.ApiError
                     )
 
-                    val characters =  mapper.mapToDomainList(apiResponse.results)
+                    val characters = mapper.mapToDomainList(apiResponse.results)
 
                     if (page == 1) {
                         characterCache.evictAll()
@@ -60,6 +62,7 @@ class CharacterRepository(private val config: SdkConfig = SdkConfig()) : Paginat
                 val error = when (e) {
                     is java.net.UnknownHostException,
                     is java.net.SocketTimeoutException -> CharacterError.NetworkError
+
                     else -> CharacterError.Unknown(e)
                 }
                 Result.failure(error)
