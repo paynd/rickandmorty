@@ -7,18 +7,16 @@ import kotlinx.coroutines.withContext
 import se.ox.assigment.sdk.api.NetworkModule
 import se.ox.assigment.sdk.errors.CharacterError
 
-class CharacterRepository : PaginatedDataSource {
-    private val apiService = NetworkModule.apiService
+class CharacterRepository(private val config: SdkConfig = SdkConfig()) : PaginatedDataSource {
+    private val apiService = NetworkModule.createApiService(config)
     private val mapper = CharacterMapper
 
     private val repositoryDispatcher: CoroutineDispatcher =
         Dispatchers.IO.limitedParallelism(1)
 
-    // Memory management limit
-    private val maxCacheSize = 500
 
     // No synchronization needed - single thread guarantees sequential access
-    private val characterCache = LruCache<Int, Character>(maxCacheSize)
+    private val characterCache = LruCache<Int, Character>(config.maxCacheSize)
 
     private var currentPage = 1
     private var totalPages = 1
