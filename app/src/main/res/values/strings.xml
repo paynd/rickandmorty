@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">tink</string>
+    <string name="content_desc_character_image">Character image</string>
+    <string name="loading_more_characters">Loading more characters...</string>
+    <string name="compose_grid">Compose Grid</string>
+    <string name="recyclerview_grid">RecyclerView Grid</string>
 </resources>

@@ -29,7 +29,7 @@ class CharacterViewModel : ViewModel() {
         loadCharacters()
     }
 
-    fun loadCharacters() {
+    private fun loadCharacters() {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
@@ -55,7 +55,7 @@ class CharacterViewModel : ViewModel() {
             _isLoading.value = true
 
             repository.loadPage(currentPage).fold(
-                onSuccess = { response ->
+                onSuccess = {
                     _characters.value = repository.getCurrentData()
                     currentPage++
                 },

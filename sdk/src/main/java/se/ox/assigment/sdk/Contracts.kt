@@ -15,7 +15,7 @@ data class PagedResponse(
     companion object {
         val NONE = PagedResponse(
             data = emptyList(),
-            currentPage = 0,
+            currentPage = 1,
             hasNext = false
         )
     }
